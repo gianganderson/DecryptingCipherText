@@ -20,6 +20,8 @@ public class DecryptCipherText {
      * @param args the command line arguments
      */
     private static String cipherText = "DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ";
+//    DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ  
+//    FUBHAEPPFOYRTEMHOMNTETHSMIOMNTEISOUYRLFEIBYHAKYYMOAHADANLSTOISLACSSRIEALY
     
     public static void main(String[] args) {
         // TODO code application logic here
@@ -28,11 +30,17 @@ public class DecryptCipherText {
     
     public static void run() {
         String shiftedText = "";
-        for (int i = 1; i < 26; i++) {
-            shiftedText = shiftCipher(cipherText, i);
-            permutation(shiftedText,"12");
-        }
-//        shiftedText = shiftCipher(cipherText, 3);
+        String example = "ABC";
+        System.out.println(shiftCipher("DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ", 23) + " right");
+        System.out.println(shiftLeftCipher("AOMTMTUEAOAHARYHFENSNOFHMDTLSLBPTMHMSLYYASSSAUPROTOIRBYHLISEFEYHEIEYIKANOCILN", 23));
+        String[] s = "F U B H A E P P F O Y R T E M H O M N T E T H S M I O M N T E I S O U Y R L F E I B Y H A K Y Y M O A H A D A N L S T H O I S L A C S S S R I E A L Y".split(" ");
+        String meh = "BEHAPPYFORTHEMOMENTTHISMOMENTISYOURLIFEBYKHAYYAMOHANDALSOTHISCLASSISREALLYFUN";
+//        for (int i = 1; i < 26; i++) {
+//            shiftedText = shiftCipher(cipherText, i);
+//            permutation(shiftedText,"123");
+//        }
+//        shiftedText = shiftCipher(cipherText, 23);
+////        System.out.println(shiftedText);
 //        permutation(shiftedText, "12345");
     }
     
@@ -41,6 +49,7 @@ public class DecryptCipherText {
      * @param str
      * @param shiftParameter 
      * Shifts each character in the string shiftParameter amount of times.
+     * @return 
      */
 
     public static String shiftCipher(String str, int shiftParameter) {
@@ -63,6 +72,25 @@ public class DecryptCipherText {
                 //append to stringbuilder
                 sb.append((char) v );
     	}
+        return sb.toString();
+    }
+    
+    public static String shiftLeftCipher(String str, int shiftParameter) {
+        if (shiftParameter >= 26) {
+            return "Not valid.";
+        }
+        str = str.toUpperCase();
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            int v = ((int) str.charAt(i)) - shiftParameter;
+            if (v < 65) {
+                int diff = 65 - v;
+                v = 91 - diff;
+            }
+            sb.append((char) v);
+        }
+        
         return sb.toString();
     }
     
