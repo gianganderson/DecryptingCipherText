@@ -30,18 +30,12 @@ public class DecryptCipherText {
     
     public static void run() {
         String shiftedText = "";
-        String example = "ABC";
-        System.out.println(shiftCipher("DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ", 23) + " right");
-        System.out.println(shiftLeftCipher("AOMTMTUEAOAHARYHFENSNOFHMDTLSLBPTMHMSLYYASSSAUPROTOIRBYHLISEFEYHEIEYIKANOCILN", 23));
-        String[] s = "F U B H A E P P F O Y R T E M H O M N T E T H S M I O M N T E I S O U Y R L F E I B Y H A K Y Y M O A H A D A N L S T H O I S L A C S S S R I E A L Y".split(" ");
-        String meh = "BEHAPPYFORTHEMOMENTTHISMOMENTISYOURLIFEBYKHAYYAMOHANDALSOTHISCLASSISREALLYFUN";
 //        for (int i = 1; i < 26; i++) {
 //            shiftedText = shiftCipher(cipherText, i);
-//            permutation(shiftedText,"123");
+//            permutation(shiftedText, "12345");
 //        }
-//        shiftedText = shiftCipher(cipherText, 23);
-////        System.out.println(shiftedText);
-//        permutation(shiftedText, "12345");
+        shiftedText = shiftCipher(cipherText, 23);
+        permutation(shiftedText, "12345");
     }
     
     /**
