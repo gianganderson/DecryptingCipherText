@@ -96,32 +96,49 @@ public class DecryptCipherText {
      * Places the split up characters in an ArrayList of Strings. Adding the elements in the array list gives me the order.
      * and the index of the key, for example list.get(2) will fill up column 0, and list.get(4) will fill up column 1, and so on..
      */
-    
     public static void columnarTransposition(String str, String key) {
-        int numOfRows = str.length() / key.length();
         int numOfCols = key.length();
         int strLength = str.length();
-        char[][] arr = new char[numOfRows][numOfCols];
-        ArrayList<String> list = new ArrayList<String>();
-        list.add(str.substring(0, numOfRows));
-        strLength -= numOfRows;
-        //split by the number of rows
-        for (int i = numOfRows; i < str.length(); i+=numOfRows) {
-            //when the string length is not divisible by the key length, must also pad the array at the end?
-            if (strLength < numOfRows) {
-                list.add(str.substring(i, i + strLength));
-            }
-            else{
-                list.add(str.substring(i, i + numOfRows));
-            }
-            strLength -= numOfRows;
+        int numOfRows = 0;
+        int charsPad = 0;
+        //hold the first two keys
+        ArrayList<String> splittedStrings = new ArrayList<String>();
+        ArrayList<Integer> keys = new ArrayList<Integer>();
+        if (str.length() % key.length() != 0) {
+             numOfRows = str.length() / key.length() + 1;
+             int mod = str.length() % key.length();
+             charsPad = key.length() - mod;
+        } else {
+            numOfRows = str.length() / key.length();
         }
-        //look at each character in the key
+        char[][] arr = new char[numOfRows][numOfCols];
+        //if the the key length is 6 and the string needs to be added by 4 letters. keySplit = 2.
+        //this means take the first two integers in the key.
+        int keySplit = key.length() - charsPad;
+        //add them to an arraylist to check if you want to split by numOfRows or numOfRows -1
+        for (int i = 0; i < keySplit; i++) {
+            keys.add(Character.getNumericValue(key.charAt(i)));
+        }
+        //to split the string
+        int currentPos = 0;
+        for (int i = 1; i < key.length() + 1; i++) {
+            if (!keys.contains(i)) {
+                //split by numOfRows -1
+                splittedStrings.add(str.substring(currentPos, currentPos + numOfRows - 1));
+                currentPos += numOfRows -1;
+            }
+            else {
+                //split by numOfRows 
+                splittedStrings.add(str.substring(currentPos, currentPos + numOfRows));
+                currentPos += numOfRows;
+            }
+        }
+        
         for (int i = 0; i < key.length(); i++) {
             int pos = Character.getNumericValue(key.charAt(i));
             //retrieve its element in the array list, 453621 would be list.get(3) and I know that '4' is in the 0th index.
             //so it should be placed into the 0th column, 5 should be placed in the 1st column, etc...
-            String split = list.get(pos - 1);
+            String split = splittedStrings.get(pos - 1);
             //place it horizontally into the 2D array.
             for (int k = 0; k < split.length(); k++) {
                 arr[k][i] = split.charAt(k);
@@ -130,6 +147,39 @@ public class DecryptCipherText {
         printArray(arr, numOfRows, numOfCols);
         displayOutput(arr, numOfRows, numOfCols);
     }
+//    public static void columnarTransposition(String str, String key) {
+//        int numOfRows = str.length() / key.length();
+//        int numOfCols = key.length();
+//        int strLength = str.length();
+//        char[][] arr = new char[numOfRows][numOfCols];
+//        ArrayList<String> list = new ArrayList<String>();
+//        list.add(str.substring(0, numOfRows));
+//        strLength -= numOfRows;
+//        //split by the number of rows
+//        for (int i = numOfRows; i < str.length(); i+=numOfRows) {
+//            //when the string length is not divisible by the key length, must also pad the array at the end?
+//            if (strLength < numOfRows) {
+//                list.add(str.substring(i, i + strLength));
+//            }
+//            else{
+//                list.add(str.substring(i, i + numOfRows));
+//            }
+//            strLength -= numOfRows;
+//        }
+//        //look at each character in the key
+//        for (int i = 0; i < key.length(); i++) {
+//            int pos = Character.getNumericValue(key.charAt(i));
+//            //retrieve its element in the array list, 453621 would be list.get(3) and I know that '4' is in the 0th index.
+//            //so it should be placed into the 0th column, 5 should be placed in the 1st column, etc...
+//            String split = list.get(pos - 1);
+//            //place it horizontally into the 2D array.
+//            for (int k = 0; k < split.length(); k++) {
+//                arr[k][i] = split.charAt(k);
+//            }
+//        }
+//        printArray(arr, numOfRows, numOfCols);
+//        displayOutput(arr, numOfRows, numOfCols);
+//    }
     
     public static void printArray(char[][] arr, int rowLength, int colLength) {
         for (int i = 0; i < rowLength; i++ ) {
