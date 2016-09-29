@@ -12,14 +12,13 @@ package decryptciphertext;
 import java.io.*;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 public class DecryptCipherText {
 
     /**
      * @param args the command line arguments
      */
     private static String cipherText = "DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ";
+    private static String shiftedText = "";
 //    DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ  
 //    FUBHAEPPFOYRTEMHOMNTETHSMIOMNTEISOUYRLFEIBYHAKYYMOAHADANLSTOISLACSSRIEALY
     
@@ -29,13 +28,30 @@ public class DecryptCipherText {
     }
     
     public static void run() {
-        String shiftedText = "";
-//        for (int i = 1; i < 26; i++) {
-//            shiftedText = shiftCipher(cipherText, i);
-//            permutation(shiftedText, "12345");
-//        }
-        shiftedText = shiftCipher(cipherText, 23);
-        permutation(shiftedText, "12345");
+        String key = "";
+        ArrayList<String> keyLength = new ArrayList<String>();
+        for (int i = 0; i < 7; i++) {
+            if (i >= 1) {
+                String someKey = keyLength.get(i - 1);
+                someKey += String.valueOf(i + 1);
+                keyLength.add(someKey);
+            }else {
+                keyLength.add(String.valueOf(i + 1)); 
+            }                    
+        }
+        
+        for (int i = 1; i < 26; i++) {
+            for (int j = 0; j < keyLength.size(); j++) {
+                shiftedText = shiftCipher(cipherText, i);
+                System.out.println(keyLength.get(j));
+                permutation(shiftedText, keyLength.get(j));
+            }
+
+        }
+
+        
+            
+            
     }
     
     /**
@@ -144,44 +160,98 @@ public class DecryptCipherText {
                 arr[k][i] = split.charAt(k);
             }
         }
-        printArray(arr, numOfRows, numOfCols);
-        displayOutput(arr, numOfRows, numOfCols);
-    }
-//    public static void columnarTransposition(String str, String key) {
-//        int numOfRows = str.length() / key.length();
-//        int numOfCols = key.length();
-//        int strLength = str.length();
-//        char[][] arr = new char[numOfRows][numOfCols];
-//        ArrayList<String> list = new ArrayList<String>();
-//        list.add(str.substring(0, numOfRows));
-//        strLength -= numOfRows;
-//        //split by the number of rows
-//        for (int i = numOfRows; i < str.length(); i+=numOfRows) {
-//            //when the string length is not divisible by the key length, must also pad the array at the end?
-//            if (strLength < numOfRows) {
-//                list.add(str.substring(i, i + strLength));
-//            }
-//            else{
-//                list.add(str.substring(i, i + numOfRows));
-//            }
-//            strLength -= numOfRows;
-//        }
-//        //look at each character in the key
-//        for (int i = 0; i < key.length(); i++) {
-//            int pos = Character.getNumericValue(key.charAt(i));
-//            //retrieve its element in the array list, 453621 would be list.get(3) and I know that '4' is in the 0th index.
-//            //so it should be placed into the 0th column, 5 should be placed in the 1st column, etc...
-//            String split = list.get(pos - 1);
-//            //place it horizontally into the 2D array.
-//            for (int k = 0; k < split.length(); k++) {
-//                arr[k][i] = split.charAt(k);
-//            }
-//        }
 //        printArray(arr, numOfRows, numOfCols);
-//        displayOutput(arr, numOfRows, numOfCols);
-//    }
+        displayOutput(arr, numOfRows, numOfCols, key);
+    }
     
-    public static void printArray(char[][] arr, int rowLength, int colLength) {
+    public static String encryption(String str, String key) {
+        int charsToPad = 0;
+        int numOfRows = 0;
+        if (str.length() % key.length() != 0) {
+            int mod = str.length() % key.length();
+            numOfRows = str.length() / key.length() + 1;
+            charsToPad = key.length() - mod;
+            for (int i = 0; i < charsToPad; i++) {
+                str += "";
+            }
+        }
+        else {
+            numOfRows = str.length() / key.length();
+        }
+        int strLength = str.length();
+        int numOfCols = key.length();
+        char[][] arr = new char[numOfRows][numOfCols];
+        char[][] newArray = new char[numOfRows][numOfCols];
+        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> newList = new ArrayList<String>();
+        list.add(str.substring(0, key.length()));
+        strLength -= key.length();
+        //split by the number of rows
+        for (int i = key.length(); i < str.length(); i+=key.length()) {
+            //when the string length is not divisible by the key length, must also pad the array at the end?
+            if (strLength < key.length()) {
+                list.add(str.substring(i, i + strLength));
+            }
+            else{
+                list.add(str.substring(i, i + key.length()));
+            }
+            strLength -= key.length();
+        }
+        for (int i = 0; i < numOfRows; i++) {
+            for (int k = 0; k < numOfCols; k++) {
+                if (k >= list.get(i).length()) {
+                    break;
+                }else {
+                  arr[i][k] = list.get(i).charAt(k);
+                }
+  
+            }
+        }
+        String newString = "";
+        for (int i = 0; i < numOfCols; i++) {
+           for (int k = 0; k < numOfRows; k++) {
+               newString += arr[k][i];
+           }
+           newList.add(newString);
+
+           newString = "";
+        }
+        
+        
+        for (int z = 0; z < key.length(); z++) {
+            int pos = Character.getNumericValue(key.charAt(z));
+            String split = newList.get(pos - 1);
+            char c = key.charAt(pos - 1);
+            int num = Character.getNumericValue(c) - 1;
+            int k = 0;
+            for (int i = 0; i < split.length(); i++) {
+                newArray[i][num] = split.charAt(k);
+                k++;
+             }   
+             k= 0;
+        }
+        
+        String padded = printArrayVert(newArray, numOfRows, numOfCols);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < padded.length(); i++) {
+            if (padded.charAt(i) != 0) 
+                sb.append(padded.charAt(i));
+        }
+        
+        return sb.toString();
+    }
+    
+    public static String printArrayVert(char[][] arr, int rowLength, int colLength) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < colLength; i++ ) {
+            for (int k = 0; k < rowLength; k++) {
+                sb.append(arr[k][i]);
+            }
+        }
+       return sb.toString();
+    }
+    
+    public static void printArrayHorz(char[][] arr, int rowLength, int colLength) {
         for (int i = 0; i < rowLength; i++ ) {
             for (int k = 0; k < colLength; k++) {
                 System.out.print(arr[i][k] +  " ");
@@ -190,14 +260,22 @@ public class DecryptCipherText {
         System.out.println();
     }
     
-    public static void displayOutput(char[][] arr, int rowLength, int colLength) {
+    public static void displayOutput(char[][] arr, int rowLength, int colLength, String key) {
         try {
+            StringBuilder sb = new StringBuilder();
             PrintWriter output = new PrintWriter(new FileWriter("decrypted.txt", true));
             for (int i = 0; i < rowLength; i++ ) {
                 for (int k = 0; k < colLength; k++) {
-                    output.print(arr[i][k] + " ");
+                    sb.append(arr[i][k]);
+                    
                 }
-            }    
+            }
+            output.print(sb);
+
+            
+//            if (shiftedText.equals(encryption(sb.toString(), "35214"))) {
+//                output.printf(sb.toString());
+//            }
             output.println();
             output.close();
  
