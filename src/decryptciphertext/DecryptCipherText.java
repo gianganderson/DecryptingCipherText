@@ -12,6 +12,7 @@ package decryptciphertext;
 import java.io.*;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 public class DecryptCipherText {
 
     /**
@@ -30,15 +31,9 @@ public class DecryptCipherText {
     public static void run() {
         String key = "";
         ArrayList<String> keyLength = new ArrayList<String>();
-        for (int i = 0; i < 7; i++) {
-            if (i >= 1) {
-                String someKey = keyLength.get(i - 1);
-                someKey += String.valueOf(i + 1);
-                keyLength.add(someKey);
-            }else {
-                keyLength.add(String.valueOf(i + 1)); 
-            }                    
-        }
+        keyLength = returnAllKeys(keyLength);
+  
+
         
         for (int i = 1; i < 26; i++) {
             for (int j = 0; j < keyLength.size(); j++) {
@@ -46,12 +41,41 @@ public class DecryptCipherText {
                 System.out.println(keyLength.get(j));
                 permutation(shiftedText, keyLength.get(j));
             }
+        }
+     
+    }
+    
+    public static ArrayList<String> returnAllKeys(ArrayList<String> keyLength) {
+        for (int i = 0; i < 8; i++) {
+            if (i >= 1) {
+                String someKey = keyLength.get(i - 1);
+                someKey += String.valueOf(i + 1);
+                keyLength.add(someKey);
+            }else {
+                keyLength.add(String.valueOf(i + 1)); 
+            }                    
+        }       
+        return keyLength;
+    }
+    
+    
+    public static int readFile(String str) {
+        int counter = 0;
+        try {
+           Scanner input = new Scanner(new File("dictionary.txt"));
+           while (input.hasNext()) {
+               String word = input.next().toUpperCase();
+               if (str.contains(word)) {
+                   counter++;
+               }
+           }
 
         }
-
-        
-            
-            
+        catch(FileNotFoundException e) {
+            System.out.println("dictionary.txt not found");
+            return -1;
+        }
+        return counter;
     }
     
     /**
@@ -270,13 +294,15 @@ public class DecryptCipherText {
                     
                 }
             }
-            output.print(sb);
-
+            int count = readFile(sb.toString());
             
-//            if (shiftedText.equals(encryption(sb.toString(), "35214"))) {
-//                output.printf(sb.toString());
-//            }
-            output.println();
+            if (count > 20) {
+                
+                output.print(sb + " Number of words: " + count);
+                output.println();
+            }
+            
+            
             output.close();
  
         } 
