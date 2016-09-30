@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 public class DecryptCipherText {
 
@@ -24,8 +23,6 @@ public class DecryptCipherText {
     private static String cipherText = "DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ";
     private static String shiftedText = "";
     private static HashMap<String, Integer> hm = new HashMap<String, Integer>();
-//    DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ  
-//    FUBHAEPPFOYRTEMHOMNTETHSMIOMNTEISOUYRLFEIBYHAKYYMOAHADANLSTOISLACSSRIEALY
     
     public static void main(String[] args) {
         // TODO code application logic here
