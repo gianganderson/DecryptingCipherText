@@ -13,6 +13,9 @@ import java.io.*;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 public class DecryptCipherText {
 
     /**
@@ -20,12 +23,16 @@ public class DecryptCipherText {
      */
     private static String cipherText = "DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ";
     private static String shiftedText = "";
+    private static HashMap<String, Integer> hm = new HashMap<String, Integer>();
 //    DRPWPWXHDRDKDUBKIHQVQRIKPGWOVOESWPKPVOBBDVVVDXSURWRLUEBKOLVHIHBKHLHBLNDQRFLOQ  
 //    FUBHAEPPFOYRTEMHOMNTETHSMIOMNTEISOUYRLFEIBYHAKYYMOAHADANLSTOISLACSSRIEALY
     
     public static void main(String[] args) {
         // TODO code application logic here
         run();
+        String msg = maxWordOccurence();
+        System.out.println(msg);
+        displayOutput(msg);
     }
     
     public static void run() {
@@ -38,7 +45,6 @@ public class DecryptCipherText {
         for (int i = 1; i < 26; i++) {
             for (int j = 0; j < keyLength.size(); j++) {
                 shiftedText = shiftCipher(cipherText, i);
-                System.out.println(keyLength.get(j));
                 permutation(shiftedText, keyLength.get(j));
             }
         }
@@ -46,7 +52,7 @@ public class DecryptCipherText {
     }
     
     public static ArrayList<String> returnAllKeys(ArrayList<String> keyLength) {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 5; i++) {
             if (i >= 1) {
                 String someKey = keyLength.get(i - 1);
                 someKey += String.valueOf(i + 1);
@@ -185,85 +191,85 @@ public class DecryptCipherText {
             }
         }
 //        printArray(arr, numOfRows, numOfCols);
-        displayOutput(arr, numOfRows, numOfCols, key);
+        trimDownFile(arr, numOfRows, numOfCols, key);
     }
     
-    public static String encryption(String str, String key) {
-        int charsToPad = 0;
-        int numOfRows = 0;
-        if (str.length() % key.length() != 0) {
-            int mod = str.length() % key.length();
-            numOfRows = str.length() / key.length() + 1;
-            charsToPad = key.length() - mod;
-            for (int i = 0; i < charsToPad; i++) {
-                str += "";
-            }
-        }
-        else {
-            numOfRows = str.length() / key.length();
-        }
-        int strLength = str.length();
-        int numOfCols = key.length();
-        char[][] arr = new char[numOfRows][numOfCols];
-        char[][] newArray = new char[numOfRows][numOfCols];
-        ArrayList<String> list = new ArrayList<String>();
-        ArrayList<String> newList = new ArrayList<String>();
-        list.add(str.substring(0, key.length()));
-        strLength -= key.length();
-        //split by the number of rows
-        for (int i = key.length(); i < str.length(); i+=key.length()) {
-            //when the string length is not divisible by the key length, must also pad the array at the end?
-            if (strLength < key.length()) {
-                list.add(str.substring(i, i + strLength));
-            }
-            else{
-                list.add(str.substring(i, i + key.length()));
-            }
-            strLength -= key.length();
-        }
-        for (int i = 0; i < numOfRows; i++) {
-            for (int k = 0; k < numOfCols; k++) {
-                if (k >= list.get(i).length()) {
-                    break;
-                }else {
-                  arr[i][k] = list.get(i).charAt(k);
-                }
-  
-            }
-        }
-        String newString = "";
-        for (int i = 0; i < numOfCols; i++) {
-           for (int k = 0; k < numOfRows; k++) {
-               newString += arr[k][i];
-           }
-           newList.add(newString);
-
-           newString = "";
-        }
-        
-        
-        for (int z = 0; z < key.length(); z++) {
-            int pos = Character.getNumericValue(key.charAt(z));
-            String split = newList.get(pos - 1);
-            char c = key.charAt(pos - 1);
-            int num = Character.getNumericValue(c) - 1;
-            int k = 0;
-            for (int i = 0; i < split.length(); i++) {
-                newArray[i][num] = split.charAt(k);
-                k++;
-             }   
-             k= 0;
-        }
-        
-        String padded = printArrayVert(newArray, numOfRows, numOfCols);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < padded.length(); i++) {
-            if (padded.charAt(i) != 0) 
-                sb.append(padded.charAt(i));
-        }
-        
-        return sb.toString();
-    }
+//    public static String encryption(String str, String key) {
+//        int charsToPad = 0;
+//        int numOfRows = 0;
+//        if (str.length() % key.length() != 0) {
+//            int mod = str.length() % key.length();
+//            numOfRows = str.length() / key.length() + 1;
+//            charsToPad = key.length() - mod;
+//            for (int i = 0; i < charsToPad; i++) {
+//                str += "";
+//            }
+//        }
+//        else {
+//            numOfRows = str.length() / key.length();
+//        }
+//        int strLength = str.length();
+//        int numOfCols = key.length();
+//        char[][] arr = new char[numOfRows][numOfCols];
+//        char[][] newArray = new char[numOfRows][numOfCols];
+//        ArrayList<String> list = new ArrayList<String>();
+//        ArrayList<String> newList = new ArrayList<String>();
+//        list.add(str.substring(0, key.length()));
+//        strLength -= key.length();
+//        //split by the number of rows
+//        for (int i = key.length(); i < str.length(); i+=key.length()) {
+//            //when the string length is not divisible by the key length, must also pad the array at the end?
+//            if (strLength < key.length()) {
+//                list.add(str.substring(i, i + strLength));
+//            }
+//            else{
+//                list.add(str.substring(i, i + key.length()));
+//            }
+//            strLength -= key.length();
+//        }
+//        for (int i = 0; i < numOfRows; i++) {
+//            for (int k = 0; k < numOfCols; k++) {
+//                if (k >= list.get(i).length()) {
+//                    break;
+//                }else {
+//                  arr[i][k] = list.get(i).charAt(k);
+//                }
+//  
+//            }
+//        }
+//        String newString = "";
+//        for (int i = 0; i < numOfCols; i++) {
+//           for (int k = 0; k < numOfRows; k++) {
+//               newString += arr[k][i];
+//           }
+//           newList.add(newString);
+//
+//           newString = "";
+//        }
+//        
+//        
+//        for (int z = 0; z < key.length(); z++) {
+//            int pos = Character.getNumericValue(key.charAt(z));
+//            String split = newList.get(pos - 1);
+//            char c = key.charAt(pos - 1);
+//            int num = Character.getNumericValue(c) - 1;
+//            int k = 0;
+//            for (int i = 0; i < split.length(); i++) {
+//                newArray[i][num] = split.charAt(k);
+//                k++;
+//             }   
+//             k= 0;
+//        }
+//        
+//        String padded = printArrayVert(newArray, numOfRows, numOfCols);
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < padded.length(); i++) {
+//            if (padded.charAt(i) != 0) 
+//                sb.append(padded.charAt(i));
+//        }
+//        
+//        return sb.toString();
+//    }
     
     public static String printArrayVert(char[][] arr, int rowLength, int colLength) {
         StringBuilder sb = new StringBuilder();
@@ -284,34 +290,48 @@ public class DecryptCipherText {
         System.out.println();
     }
     
-    public static void displayOutput(char[][] arr, int rowLength, int colLength, String key) {
+    public static void trimDownFile(char[][] arr, int rowLength, int colLength, String key) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < rowLength; i++ ) {
+            for (int k = 0; k < colLength; k++) {
+                sb.append(arr[i][k]);
+            }
+        }
+        int count = readFile(sb.toString());
+
+        if (count > 25) {
+            hm.put(sb.toString(), count);
+        }
+    }
+    
+    public static String maxWordOccurence() {
+        int count = 0;
+        int maxCount = 0;
+        String decrypted = "";
+        for (Map.Entry<String, Integer> entry : hm.entrySet()) {
+            count = entry.getValue();
+            if (count > maxCount) {
+                maxCount = count;
+                decrypted = entry.getKey();
+            }
+        }
+        return decrypted;
+    }
+    
+    public static void displayOutput(String str) {
         try {
-            StringBuilder sb = new StringBuilder();
-            PrintWriter output = new PrintWriter(new FileWriter("decrypted.txt", true));
-            for (int i = 0; i < rowLength; i++ ) {
-                for (int k = 0; k < colLength; k++) {
-                    sb.append(arr[i][k]);
-                    
-                }
-            }
-            int count = readFile(sb.toString());
             
-            if (count > 20) {
-                
-                output.print(sb + " Number of words: " + count);
-                output.println();
-            }
-            
-            
+            PrintWriter output = new PrintWriter(new FileWriter("permutations.txt"));
+            output.print(str);
             output.close();
- 
         } 
         
         catch (IOException ex) {
-            System.out.println("decrpyted.txt not found");
+            System.out.println("permutations.txt not found");
             return;
         }
-    }
+    }        
+    
     
     public static void permutation(String shiftedText, String str) { 
         permutation(shiftedText, "", str); 
