@@ -32,13 +32,15 @@ public class DecryptCipherText {
         displayOutput(msg);
     }
     
+    /**
+     * shifts the encrypted message i times, then checks all the permutations.
+     */
+    
     public static void run() {
         String key = "";
         ArrayList<String> keyLength = new ArrayList<String>();
         keyLength = returnAllKeys(keyLength);
-  
-
-        
+         
         for (int i = 1; i < 26; i++) {
             for (int j = 0; j < keyLength.size(); j++) {
                 shiftedText = shiftCipher(cipherText, i);
@@ -47,6 +49,13 @@ public class DecryptCipherText {
         }
      
     }
+    
+    /**
+     * 
+     * @param keyLength
+     * @return ArrayList of all keys
+     * 1, 12, 123, 1234, 12345, 123456..
+     */
     
     public static ArrayList<String> returnAllKeys(ArrayList<String> keyLength) {
         for (int i = 0; i < 5; i++) {
@@ -60,6 +69,12 @@ public class DecryptCipherText {
         }       
         return keyLength;
     }
+    
+    /**
+     * 
+     * @param str
+     * @return number of words in the dictionary that are contained in the decrypted ciphertext
+     */
     
     
     public static int readFile(String str) {
@@ -112,25 +127,6 @@ public class DecryptCipherText {
         return sb.toString();
     }
     
-    public static String shiftLeftCipher(String str, int shiftParameter) {
-        if (shiftParameter >= 26) {
-            return "Not valid.";
-        }
-        str = str.toUpperCase();
-        
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            int v = ((int) str.charAt(i)) - shiftParameter;
-            if (v < 65) {
-                int diff = 65 - v;
-                v = 91 - diff;
-            }
-            sb.append((char) v);
-        }
-        
-        return sb.toString();
-    }
-    
     /**
      * 
      * @param str
@@ -138,6 +134,10 @@ public class DecryptCipherText {
      * Splits the string up by the number of rows. "24315"
      * Places the split up characters in an ArrayList of Strings. Adding the elements in the array list gives me the order.
      * and the index of the key, for example list.get(2) will fill up column 0, and list.get(4) will fill up column 1, and so on..
+     * 
+     * The most difficult part of this assignment was when you had to decrypt a ciphertext that required padding. 
+     * I used this website to figure out the algorithm.
+     * http://crypto.interactive-maths.com/columnar-transposition-cipher.html
      */
     public static void columnarTransposition(String str, String key) {
         int numOfCols = key.length();
@@ -187,106 +187,18 @@ public class DecryptCipherText {
                 arr[k][i] = split.charAt(k);
             }
         }
-//        printArray(arr, numOfRows, numOfCols);
         trimDownFile(arr, numOfRows, numOfCols, key);
     }
     
-//    public static String encryption(String str, String key) {
-//        int charsToPad = 0;
-//        int numOfRows = 0;
-//        if (str.length() % key.length() != 0) {
-//            int mod = str.length() % key.length();
-//            numOfRows = str.length() / key.length() + 1;
-//            charsToPad = key.length() - mod;
-//            for (int i = 0; i < charsToPad; i++) {
-//                str += "";
-//            }
-//        }
-//        else {
-//            numOfRows = str.length() / key.length();
-//        }
-//        int strLength = str.length();
-//        int numOfCols = key.length();
-//        char[][] arr = new char[numOfRows][numOfCols];
-//        char[][] newArray = new char[numOfRows][numOfCols];
-//        ArrayList<String> list = new ArrayList<String>();
-//        ArrayList<String> newList = new ArrayList<String>();
-//        list.add(str.substring(0, key.length()));
-//        strLength -= key.length();
-//        //split by the number of rows
-//        for (int i = key.length(); i < str.length(); i+=key.length()) {
-//            //when the string length is not divisible by the key length, must also pad the array at the end?
-//            if (strLength < key.length()) {
-//                list.add(str.substring(i, i + strLength));
-//            }
-//            else{
-//                list.add(str.substring(i, i + key.length()));
-//            }
-//            strLength -= key.length();
-//        }
-//        for (int i = 0; i < numOfRows; i++) {
-//            for (int k = 0; k < numOfCols; k++) {
-//                if (k >= list.get(i).length()) {
-//                    break;
-//                }else {
-//                  arr[i][k] = list.get(i).charAt(k);
-//                }
-//  
-//            }
-//        }
-//        String newString = "";
-//        for (int i = 0; i < numOfCols; i++) {
-//           for (int k = 0; k < numOfRows; k++) {
-//               newString += arr[k][i];
-//           }
-//           newList.add(newString);
-//
-//           newString = "";
-//        }
-//        
-//        
-//        for (int z = 0; z < key.length(); z++) {
-//            int pos = Character.getNumericValue(key.charAt(z));
-//            String split = newList.get(pos - 1);
-//            char c = key.charAt(pos - 1);
-//            int num = Character.getNumericValue(c) - 1;
-//            int k = 0;
-//            for (int i = 0; i < split.length(); i++) {
-//                newArray[i][num] = split.charAt(k);
-//                k++;
-//             }   
-//             k= 0;
-//        }
-//        
-//        String padded = printArrayVert(newArray, numOfRows, numOfCols);
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < padded.length(); i++) {
-//            if (padded.charAt(i) != 0) 
-//                sb.append(padded.charAt(i));
-//        }
-//        
-//        return sb.toString();
-//    }
-    
-    public static String printArrayVert(char[][] arr, int rowLength, int colLength) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < colLength; i++ ) {
-            for (int k = 0; k < rowLength; k++) {
-                sb.append(arr[k][i]);
-            }
-        }
-       return sb.toString();
-    }
-    
-    public static void printArrayHorz(char[][] arr, int rowLength, int colLength) {
-        for (int i = 0; i < rowLength; i++ ) {
-            for (int k = 0; k < colLength; k++) {
-                System.out.print(arr[i][k] +  " ");
-            }
-        }
-        System.out.println();
-    }
-    
+    /**
+     * 
+     * @param arr
+     * @param rowLength
+     * @param colLength
+     * @param key 
+     * Adds all of the decrypted ciphertext along with their "contained number of words" into a HashMap
+     * The key is the decrypted cipher text and the value is the counter of words.
+     */
     public static void trimDownFile(char[][] arr, int rowLength, int colLength, String key) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rowLength; i++ ) {
@@ -301,6 +213,11 @@ public class DecryptCipherText {
         }
     }
     
+    /**
+     * 
+     * @return the string with the maximum number of words contained in the decrypted ciphertext.
+     */
+    
     public static String maxWordOccurence() {
         int count = 0;
         int maxCount = 0;
@@ -314,7 +231,11 @@ public class DecryptCipherText {
         }
         return decrypted;
     }
-    
+    /**
+     * 
+     * @param str 
+     * prints the decrypted ciphertext to file.
+     */
     public static void displayOutput(String str) {
         try {
             
@@ -329,7 +250,13 @@ public class DecryptCipherText {
         }
     }        
     
-    
+    /**
+     * 
+     * @param shiftedText
+     * @param str 
+     * Generates all permutations o the key and calls columnarTransposition.
+     * http://stackoverflow.com/questions/4240080/generating-all-permutations-of-a-given-string
+     */
     public static void permutation(String shiftedText, String str) { 
         permutation(shiftedText, "", str); 
     }
